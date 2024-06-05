@@ -1,11 +1,13 @@
+import numpy as np
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 
 st.set_page_config(layout="wide")
 
-rows_1 = st.container().columns([0.3, 0.3, 0.3, 0.1])
 rows_2_container = st.container()
+st.divider()
+rows_1 = st.container().columns([0.2, 0.2, 0.2, 0.1, 0.3])
 
 # Misc input
 misc_input_container = rows_1[3].container(border=True)
@@ -110,6 +112,13 @@ balance_df["ingreso / ano (PEN)"] = balance_df["ingreso / unidad (PEN)"] * balan
 balance_df["ingreso / mes (€)"] = balance_df["ingreso / unidad (€)"] * balance_df["unidades / mes"]
 balance_df["ingreso / ano (€)"] = balance_df["ingreso / unidad (€)"] * balance_df["unidades / mes"] * 12
 
+balance_df_without_sum = balance_df.copy()
+
+# Create a sum row
+sum_row = balance_df.select_dtypes(include=np.number).sum()
+sum_row["type"] = "total"
+sum_df = pd.DataFrame([sum_row])
+balance_df = pd.concat([balance_df, sum_df], ignore_index=True, axis=0)
 
 # Show key metrics
 time_unit_tabs = rows_2_container.tabs(["Mes", "Año"])
@@ -117,30 +126,90 @@ time_unit_tabs = rows_2_container.tabs(["Mes", "Año"])
 with time_unit_tabs[0]:
     month_cols = st.columns([0.4, 0.4, 0.2])
 
+    # Time barplot
+    time_month_container = month_cols[0].container(border=True, height=550)
+    time_month_container.write("#### Tiempo planificado")
+    time_bar_fig = px.bar(data_frame=balance_df, x="type", y="tiempo / mes")
+    time_bar_fig.update_layout(xaxis_title="",
+                                 yaxis={"showgrid":False,
+                                        "titlefont": {"size": 20},
+                                        "tickfont": {"size": 15}},
+                                 xaxis={"titlefont": {"size": 20},
+                                        "tickfont": {"size": 15},
+                                        "linecolor": "white"})
+    time_bar_fig.update_traces(marker_color="#C6A95D")
+    time_month_container.plotly_chart(time_bar_fig)
+
+    # Income barplot
+    income_month_container = month_cols[1].container(border=True)
+    income_month_top_cols = income_month_container.columns(2)
+    unit = income_month_top_cols[1].radio(label="Divisa", options=["PEN", "€"], horizontal=True, key="unit_month_key")
+    income_month_top_cols[0].write(f"#### Ingreso expectado ({unit})")
+    income_bar_fig = px.bar(data_frame=balance_df, x="type", y=f"ingreso / mes ({unit})")
+    income_bar_fig.update_layout(xaxis_title="",
+                                 yaxis={"showgrid":False,
+                                        "titlefont": {"size": 20},
+                                        "tickfont": {"size": 15}},
+                                 xaxis={"titlefont": {"size": 20},
+                                        "tickfont": {"size": 15},
+                                        "linecolor": "white"})
+    income_bar_fig.update_traces(marker_color="#C6A95D")
+    income_month_container.plotly_chart(income_bar_fig)
+
     # Key metrics
-    total_time_month = balance_df["tiempo / mes"].sum()
+    total_time_month = balance_df_without_sum["tiempo / mes"].sum()
     month_cols[2].container(border=True).metric(label="Tiempo total", value=f"{total_time_month} h")
 
-    total_income_month_pen = balance_df["ingreso / mes (PEN)"].sum()
+    total_income_month_pen = balance_df_without_sum["ingreso / mes (PEN)"].sum()
     month_cols[2].container(border=True).metric(label="Ingreso total (PEN)", value=f"{total_income_month_pen} S")
 
 
-    total_income_month_euro = balance_df["ingreso / mes (€)"].sum()
+    total_income_month_euro = balance_df_without_sum["ingreso / mes (€)"].sum()
     month_cols[2].container(border=True).metric(label="Ingreso total (€)", value=f"{total_income_month_euro} €")
 
 
 with time_unit_tabs[1]:
     year_cols = st.columns([0.4, 0.4, 0.2])
 
+    # Time barplot
+    time_year_container = year_cols[0].container(border=True, height=550)
+    time_year_container.write("#### Tiempo planificado")
+    time_bar_year_fig = px.bar(data_frame=balance_df, x="type", y="tiempo / ano")
+    time_bar_year_fig.update_layout(xaxis_title="",
+                                 yaxis={"showgrid":False,
+                                        "titlefont": {"size": 20},
+                                        "tickfont": {"size": 15}},
+                                 xaxis={"titlefont": {"size": 20},
+                                        "tickfont": {"size": 15},
+                                        "linecolor": "white"})
+    time_bar_year_fig.update_traces(marker_color="#C6A95D")
+    time_year_container.plotly_chart(time_bar_year_fig)
+
+    # Income barplot
+    income_year_container = year_cols[1].container(border=True)
+    income_year_top_cols = income_year_container.columns(2)
+    unit = income_year_top_cols[1].radio(label="Divisa", options=["PEN", "€"], horizontal=True, key="unit_year_key")
+    income_year_top_cols[0].write(f"#### Ingreso expectado ({unit})")
+    income_bar_year_fig = px.bar(data_frame=balance_df, x="type", y=f"ingreso / ano ({unit})")
+    income_bar_year_fig.update_layout(xaxis_title="",
+                                 yaxis={"showgrid":False,
+                                        "titlefont": {"size": 20},
+                                        "tickfont": {"size": 15}},
+                                 xaxis={"titlefont": {"size": 20},
+                                        "tickfont": {"size": 15},
+                                        "linecolor": "white"})
+    income_bar_year_fig.update_traces(marker_color="#C6A95D")
+    income_year_container.plotly_chart(income_bar_year_fig)
+
     # Key metrics
-    total_time_year = balance_df["tiempo / ano"].sum()
+    total_time_year = balance_df_without_sum["tiempo / ano"].sum()
     year_cols[2].container(border=True).metric(label="Tiempo total", value=f"{total_time_year} h")
 
-    total_income_year_pen = balance_df["ingreso / ano (PEN)"].sum()
+    total_income_year_pen = balance_df_without_sum["ingreso / ano (PEN)"].sum()
     year_cols[2].container(border=True).metric(label="Ingreso total (PEN)", value=f"{total_income_year_pen} S")
 
 
-    total_income_year_euro = balance_df["ingreso / ano (€)"].sum()
+    total_income_year_euro = balance_df_without_sum["ingreso / ano (€)"].sum()
     year_cols[2].container(border=True).metric(label="Ingreso total (€)", value=f"{total_income_year_euro} €")
 
 
