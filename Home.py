@@ -158,10 +158,12 @@ with time_unit_tabs[0]:
                                yaxis={"showgrid":False,
                                       "title": "tiempo / mes (h)",
                                       "titlefont": {"size": 20},
-                                      "tickfont": {"size": 15}},
+                                      "tickfont": {"size": 15},
+                                      "fixedrange": True},
                                xaxis={"titlefont": {"size": 20},
                                       "tickfont": {"size": 15},
-                                      "linecolor": "white"})
+                                      "linecolor": "white",
+                                      "fixedrange": True})
     time_bar_fig.update_traces(marker_color="#C6A95D")
     time_month_container.plotly_chart(time_bar_fig)
 
@@ -174,10 +176,12 @@ with time_unit_tabs[0]:
     income_bar_fig.update_layout(xaxis_title="",
                                  yaxis={"showgrid":False,
                                         "titlefont": {"size": 20},
-                                        "tickfont": {"size": 15}},
+                                        "tickfont": {"size": 15},
+                                        "fixedrange": True},
                                  xaxis={"titlefont": {"size": 20},
                                         "tickfont": {"size": 15},
-                                        "linecolor": "white"})
+                                        "linecolor": "white",
+                                        "fixedrange": True})
     income_bar_fig.update_traces(marker_color="#C6A95D")
     income_month_container.plotly_chart(income_bar_fig)
 
@@ -206,10 +210,12 @@ with time_unit_tabs[1]:
                                  yaxis={"showgrid": False,
                                         "title": "tiempo / año (h)",
                                         "titlefont": {"size": 20},
-                                        "tickfont": {"size": 15}},
+                                        "tickfont": {"size": 15},
+                                        "fixedrange": True},
                                  xaxis={"titlefont": {"size": 20},
                                         "tickfont": {"size": 15},
-                                        "linecolor": "white"})
+                                        "linecolor": "white",
+                                        "fixedrange": True})
     time_bar_year_fig.update_traces(marker_color="#C6A95D")
     time_year_container.plotly_chart(time_bar_year_fig)
 
@@ -223,10 +229,12 @@ with time_unit_tabs[1]:
                                  yaxis={"showgrid": False,
                                         "title": f"ingreso / año ({unit})",
                                         "titlefont": {"size": 20},
-                                        "tickfont": {"size": 15}},
+                                        "tickfont": {"size": 15},
+                                        "fixedrange": True},
                                  xaxis={"titlefont": {"size": 20},
                                         "tickfont": {"size": 15},
-                                        "linecolor": "white"})
+                                        "linecolor": "white",
+                                        "fixedrange": True})
     income_bar_year_fig.update_traces(marker_color="#C6A95D")
     income_year_container.plotly_chart(income_bar_year_fig)
 
