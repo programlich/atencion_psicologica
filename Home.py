@@ -5,7 +5,8 @@ import plotly.express as px
 st.set_page_config(layout="wide")
 
 rows_1 = st.container().columns([0.3, 0.3, 0.3, 0.1])
-rows_2 = st.container().columns([0.4, 0.4, 0.2])
+rows_2_container = st.container()
+
 # Misc input
 misc_input_container = rows_1[3].container(border=True)
 
@@ -91,8 +92,56 @@ balance_df.loc[balance_df["type"] == "terapia de grupo", "tiempo / unidad (h)"] 
 balance_df.loc[balance_df["type"] == "talleres", "tiempo / unidad (h)"] = taller_tiempo
 
 # Calculate values for remaining cols
+# Price and expenses in €
 balance_df["precio / unidad (€)"] = balance_df["precio / unidad (PEN)"] / euro_to_soles
 balance_df["gastos / unidad (€)"] = balance_df["gastos / unidad (PEN)"] / euro_to_soles
+
+# Total time per month and year
+balance_df["tiempo / mes"] = balance_df["tiempo / unidad (h)"] * balance_df["unidades / mes"]
+balance_df["tiempo / ano"] = balance_df["tiempo / unidad (h)"] * balance_df["unidades / mes"] * 12
+
+# Income per unit
+balance_df["ingreso / unidad (PEN)"] = balance_df["precio / unidad (PEN)"] - balance_df["gastos / unidad (PEN)"]
+balance_df["ingreso / unidad (€)"] = balance_df["precio / unidad (€)"] - balance_df["gastos / unidad (€)"]
+
+# Income per month and year in PEN and €
+balance_df["ingreso / mes (PEN)"] = balance_df["ingreso / unidad (PEN)"] * balance_df["unidades / mes"]
+balance_df["ingreso / ano (PEN)"] = balance_df["ingreso / unidad (PEN)"] * balance_df["unidades / mes"] * 12
+balance_df["ingreso / mes (€)"] = balance_df["ingreso / unidad (€)"] * balance_df["unidades / mes"]
+balance_df["ingreso / ano (€)"] = balance_df["ingreso / unidad (€)"] * balance_df["unidades / mes"] * 12
+
+
+# Show key metrics
+time_unit_tabs = rows_2_container.tabs(["Mes", "Año"])
+
+with time_unit_tabs[0]:
+    month_cols = st.columns([0.4, 0.4, 0.2])
+
+    # Key metrics
+    total_time_month = balance_df["tiempo / mes"].sum()
+    month_cols[2].container(border=True).metric(label="Tiempo total", value=f"{total_time_month} h")
+
+    total_income_month_pen = balance_df["ingreso / mes (PEN)"].sum()
+    month_cols[2].container(border=True).metric(label="Ingreso total (PEN)", value=f"{total_income_month_pen} S")
+
+
+    total_income_month_euro = balance_df["ingreso / mes (€)"].sum()
+    month_cols[2].container(border=True).metric(label="Ingreso total (€)", value=f"{total_income_month_euro} €")
+
+
+with time_unit_tabs[1]:
+    year_cols = st.columns([0.4, 0.4, 0.2])
+
+    # Key metrics
+    total_time_year = balance_df["tiempo / ano"].sum()
+    year_cols[2].container(border=True).metric(label="Tiempo total", value=f"{total_time_year} h")
+
+    total_income_year_pen = balance_df["ingreso / ano (PEN)"].sum()
+    year_cols[2].container(border=True).metric(label="Ingreso total (PEN)", value=f"{total_income_year_pen} S")
+
+
+    total_income_year_euro = balance_df["ingreso / ano (€)"].sum()
+    year_cols[2].container(border=True).metric(label="Ingreso total (€)", value=f"{total_income_year_euro} €")
 
 
 st.dataframe(balance_df)
