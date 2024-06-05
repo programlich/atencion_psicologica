@@ -21,7 +21,7 @@ goal_active = goal_container.toggle(label="Objetivo / año", value=False, help="
                                                                               " que quieres ganar por año")
 if goal_active:
     goal_unit = goal_container.radio(label="Divisa", options=["PEN", "€"], horizontal=True)
-    goal = goal_container.number_input(label=f"Objetivo ({goal_unit})", value=0.0, step=100.0)
+    goal = goal_container.number_input(label=f"Objetivo ({goal_unit})", value=0, step=100)
 
     if goal_unit == "PEN":
         goal_pen = goal
@@ -49,10 +49,10 @@ balance_df = pd.concat([balance_df, pd.DataFrame(rows)], ignore_index=True)
 ti_container = rows_1[0].container(border=True)
 ti_container.subheader("Terapia individual")
 
-ti_precio = ti_container.number_input(label="Precio / unidad (PEN)", value=0.0, key="ti_precio_key", min_value=0.0,
-                                      step=10.0, help="Precio que pedimos por unidad en Soles peruanos")
-ti_gastos = ti_container.number_input(label="Gastos / unidad (PEN)", value=0.0, key="ti_gastos_key", min_value=0.0,
-                                      step=10.0, help="Gastos que hay por unidad en Soles peruanos")
+ti_precio = ti_container.number_input(label="Precio / unidad (PEN)", value=0, key="ti_precio_key", min_value=0,
+                                      step=10, help="Precio que pedimos por unidad en Soles peruanos")
+ti_gastos = ti_container.number_input(label="Gastos / unidad (PEN)", value=0, key="ti_gastos_key", min_value=0,
+                                      step=10, help="Gastos que hay por unidad en Soles peruanos")
 ti_unidades = ti_container.number_input(label="Unidades / mes", value=0, key="ti_unidades_key", min_value=0,
                                       step=1, help="Unidades dado por mes")
 ti_tiempo = ti_container.number_input(label="Tiempo / unidad (h)", value=0.0, key="ti_tiempo_key", min_value=0.0,
@@ -62,10 +62,10 @@ ti_tiempo = ti_container.number_input(label="Tiempo / unidad (h)", value=0.0, ke
 tg_container = rows_1[1].container(border=True)
 tg_container.subheader("Terapia de grupo")
 
-tg_precio = tg_container.number_input(label="Precio / unidad (PEN)", value=0.0, key="tg_precio_key", min_value=0.0,
-                                      step=10.0, help="Precio que pedimos por unidad en Soles peruanos")
-tg_gastos = tg_container.number_input(label="Gastos / unidad (PEN)", value=0.0, key="tg_gastos_key", min_value=0.0,
-                                      step=10.0, help="Gastos por unidad en Soles peruanos (material, administración,...)")
+tg_precio = tg_container.number_input(label="Precio / unidad (PEN)", value=0, key="tg_precio_key", min_value=0,
+                                      step=10, help="Precio que pedimos por unidad en Soles peruanos")
+tg_gastos = tg_container.number_input(label="Gastos / unidad (PEN)", value=0, key="tg_gastos_key", min_value=0,
+                                      step=10, help="Gastos por unidad en Soles peruanos (material, administración,...)")
 
 tg_unidades_participantes_cols = tg_container.container().columns(2)
 tg_unidades = tg_unidades_participantes_cols[0].number_input(label="Unidades / mes", value=0, key="tg_unidades_key", min_value=0,
@@ -81,12 +81,12 @@ tg_tiempo = tg_container.number_input(label="Tiempo / unidad (h)", value=0.0, ke
 taller_container = rows_1[2].container(border=True)
 taller_container.subheader("Talleres")
 
-taller_precio = taller_container.number_input(label="Precio / unidad (PEN)", value=0.0, key="taller_precio_key",
-                                              min_value=0.0,
-                                      step=10.0, help="Precio que pedimos por unidad en Soles peruanos")
-taller_gastos = taller_container.number_input(label="Gastos / unidad (PEN)", value=0.0, key="taller_gastos_key",
-                                              min_value=0.0,
-                                      step=10.0, help="Gastos que hay por unidad en Soles peruanos")
+taller_precio = taller_container.number_input(label="Precio / unidad (PEN)", value=0, key="taller_precio_key",
+                                              min_value=0,
+                                      step=10, help="Precio que pedimos por unidad en Soles peruanos")
+taller_gastos = taller_container.number_input(label="Gastos / unidad (PEN)", value=0, key="taller_gastos_key",
+                                              min_value=0,
+                                      step=10, help="Gastos que hay por unidad en Soles peruanos")
 taller_unidades = taller_container.number_input(label="Unidades / mes", value=0, key="taller_unidades_key", min_value=0,
                                       step=1, help="Unidades dado por mes")
 taller_tiempo = taller_container.number_input(label="Tiempo / unidad (h)", value=0.0, key="taller_tiempo_key",
