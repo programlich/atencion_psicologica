@@ -52,8 +52,14 @@ tg_precio = tg_container.number_input(label="Precio / unidad (PEN)", value=0.0, 
                                       step=10.0, help="Precio que pedimos por unidad en Soles peruanos")
 tg_gastos = tg_container.number_input(label="Gastos / unidad (PEN)", value=0.0, key="tg_gastos_key", min_value=0.0,
                                       step=10.0, help="Gastos por unidad en Soles peruanos (material, administración,...)")
-tg_unidades = tg_container.number_input(label="Unidades / mes", value=0, key="tg_unidades_key", min_value=0,
+
+tg_unidades_participantes_cols = tg_container.container().columns(2)
+tg_unidades = tg_unidades_participantes_cols[0].number_input(label="Unidades / mes", value=0, key="tg_unidades_key", min_value=0,
                                       step=1, help="Unidades dado por mes")
+tg_participantes = tg_unidades_participantes_cols[1].number_input(label="Participantes / unidad",
+                                                                  value=0, key="tg_participantes_key", min_value=0,
+                                      step=1, help="Participantes por unidad que pagan el precio cada uno")
+
 tg_tiempo = tg_container.number_input(label="Tiempo / unidad (h)", value=0.0, key="tg_tiempo_key", min_value=0.0,
                                       step=0.5, help="Tiempo de una unidad en horas (90 min = 1.5 horas)")
 
@@ -106,6 +112,10 @@ balance_df["tiempo / ano"] = balance_df["tiempo / unidad (h)"] * balance_df["uni
 balance_df["ingreso / unidad (PEN)"] = balance_df["precio / unidad (PEN)"] - balance_df["gastos / unidad (PEN)"]
 balance_df["ingreso / unidad (€)"] = balance_df["precio / unidad (€)"] - balance_df["gastos / unidad (€)"]
 
+# Multiply income of one group therapy session by number of participants
+balance_df.loc[balance_df["type"] == "terapia de grupo", "ingreso / unidad (PEN)"] *= tg_participantes
+balance_df.loc[balance_df["type"] == "terapia de grupo", "ingreso / unidad (€)"] *= tg_participantes
+
 # Income per month and year in PEN and €
 balance_df["ingreso / mes (PEN)"] = balance_df["ingreso / unidad (PEN)"] * balance_df["unidades / mes"]
 balance_df["ingreso / ano (PEN)"] = balance_df["ingreso / unidad (PEN)"] * balance_df["unidades / mes"] * 12
@@ -132,6 +142,7 @@ with time_unit_tabs[0]:
     time_bar_fig = px.bar(data_frame=balance_df, x="type", y="tiempo / mes")
     time_bar_fig.update_layout(xaxis_title="",
                                  yaxis={"showgrid":False,
+                                        "title": "tiempo / mes (h)",
                                         "titlefont": {"size": 20},
                                         "tickfont": {"size": 15}},
                                  xaxis={"titlefont": {"size": 20},
@@ -176,7 +187,8 @@ with time_unit_tabs[1]:
     time_year_container.write("#### Tiempo planificado")
     time_bar_year_fig = px.bar(data_frame=balance_df, x="type", y="tiempo / ano")
     time_bar_year_fig.update_layout(xaxis_title="",
-                                 yaxis={"showgrid":False,
+                                 yaxis={"showgrid": False,
+                                        "title": "tiempo / año (h)",
                                         "titlefont": {"size": 20},
                                         "tickfont": {"size": 15}},
                                  xaxis={"titlefont": {"size": 20},
